@@ -58,21 +58,22 @@ for1ret:	add r5, r5, #1 //i++
 
 for2:		cmp r6, r4
 		beq for1ret /*branch back to forloop1*/
-		mov r7, #0
-		mul r7, r5, r12 //get offset for [i]
+		mul r7, r5, r12 //get offset for [i] * 4
+		mul r7, r7, r4 //get offset for [i] * width
 		mul r8, r6, r12 //get offset for [j]
 		add r7, r7, r8 //get total offset for [i][j]
 		LDR r10, [r1, r7] //load A[i][j]
 		LDR r11, [r2, r7] //load B[i][j]
 		add r9, r10, r11 //C[i][j] = A[i][j] + B[i][j]
+		str r9, [r0, r7]
 		add r6, r6, #1 //j++
 		b for2
 
 end:		pop {pc}
-
+/*
 printdata:
             .word       st1
 
 st1:
             .asciz      "r1 is %d, r2 is %d, r3 is %d, r4 is %d, r0 is %d"
-
+*/
