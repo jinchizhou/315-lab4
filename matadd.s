@@ -43,6 +43,7 @@ r12 = #4
 	.syntax unified
 	.arm
 matadd:
+		push {lr}
 		ldr r4, [sp, #0]  // loads width into r4
 
 		mov r5, #0 //i = 0
@@ -50,9 +51,8 @@ matadd:
 		
 for1:		cmp r5, r3 //i < height
 		beq end
-		
 		mov r6, #0 //j = 0
-		b for2
+		b for2 //second for loop
 for1ret:	add r5, r5, #1 //i++
 		b for1
 
@@ -62,7 +62,6 @@ for2:		cmp r6, r4
 		mul r7, r5, r12 //get offset for [i]
 		mul r8, r6, r12 //get offset for [j]
 		add r7, r7, r8 //get total offset for [i][j]
-		LDR r9, [r0, r7] //load C[i][j], maybe not need
 		LDR r10, [r1, r7] //load A[i][j]
 		LDR r11, [r2, r7] //load B[i][j]
 		add r9, r10, r11 //C[i][j] = A[i][j] + B[i][j]
@@ -70,4 +69,10 @@ for2:		cmp r6, r4
 		b for2
 
 end:		pop {pc}
+
+printdata:
+            .word       st1
+
+st1:
+            .asciz      "r1 is %d, r2 is %d, r3 is %d, r4 is %d, r0 is %d"
 
