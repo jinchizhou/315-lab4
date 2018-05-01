@@ -1,3 +1,10 @@
+	.arch armv7-a
+	.text
+	.align	2
+	.global	matadd
+	.syntax unified
+	.arm
+
 matadd:
   str fp, [sp, #-4]!
   add fp, sp, #0

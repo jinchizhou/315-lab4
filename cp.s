@@ -43,33 +43,38 @@ r12 = #4
 	.syntax unified
 	.arm
 matadd:
-		ldr r4, [sp, #0]  // loads width into r4
-
+		push {lr}
+		ldr r4, [sp, #4]  // loads width into r4
+                push {r4-r12}
 		mov r5, #0 //i = 0
 		mov r12, #4 //offset constant of 4
 		
 for1:		cmp r5, r3 //i < height
 		beq end
-		
 		mov r6, #0 //j = 0
-		b for2
+		b for2 //second for loop
+
 for1ret:	add r5, r5, #1 //i++
 		b for1
 
-for2:		cmp r6, r4
-		beq for1ret /*branch back to forloop1*/
-		mov r7, #0
-		mul r7, r5, r12 //get offset for [i]
-		mul r8, r6, r12 //get offset for [j]
+for2:		cmp r6, r4  // j < width
+		beq for1ret //branch back to forloop1
+		mul r7, r5, r12 //multiply 4 with [i]
+		mul r7, r7, r4 // multiply offset with width
+                mul r8, r6, r12 //get offset for [j]
 		add r7, r7, r8 //get total offset for [i][j]
-		LDR r9, [r0, r7] //load C[i][j], maybe not need
-		LDR r10, [r1, r7] //load A[i][j]
-		LDR r11, [r2, r7] //load B[i][j]
+
+                
+                ldr r10, [r1, r7] //load A[i][j]
+		ldr r11, [r2, r7] //load B[i][j]
 		add r9, r10, r11 //C[i][j] = A[i][j] + B[i][j]
-		add r6, r6, #1 //j++
+                str r9, [r0, r7]
+               
+                add r6, r6, #1 //j++
 		b for2
 
-end:		pop {pc}
+end:	       	pop {r4-r12}
+                pop {pc}
 
 /*printdata:
             .word       st1
